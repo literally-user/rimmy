@@ -5,15 +5,6 @@
 Rimmy OS is a lightweight operating system designed for general-purpose computing, embedded systems & learning purpose. It is written in Rust programming language.
 It currently supports x86_64 architecture. future plans include support for ARM/RISC-V architecture.
 
-## Rimmy OS running basic Unix shell utilities
-
-<table>
-  <tr>
-    <td><img src="docs/screenshots/img1.png" alt="screenshot1" width="400"></td>
-    <td><img src="docs/screenshots/img2.png" alt="screenshot2" width="400"></td>
-  </tr>
-</table>
-
 ## Features
 
 - Lightweight and efficient
@@ -47,7 +38,7 @@ It currently supports x86_64 architecture. future plans include support for ARM/
 
 ## Build Instructions
 
-### ✅ Requirements
+### Requirements
 
 Rimmy OS builds require:
 
@@ -114,7 +105,7 @@ We recommend using **WSL2** with Ubuntu/Fedora:
 
 ---
 
-## ✅ Building & Run
+## Building & Run
 
 In the workspace directory, run:
 
@@ -126,7 +117,7 @@ make run
 
 ---
 
-## ✅ First Boot
+## First Boot
 
 On first boot, you **must** initialize the filesystem:
 
@@ -135,10 +126,6 @@ install
 ```
 
 inside the VM shell to format your disk.
-
-## Documentation
-
-Rimmy OS documentation is available at [https://rimmy-os.vercel.app](https://rimmy-os.vercel.app).
 
 ## License
 
