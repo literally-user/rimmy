@@ -5,7 +5,7 @@ use core::arch::asm;
 
 use limine::BaseRevision;
 use limine::request::{FramebufferRequest};
-use twilight_kernel::{print, println};
+use rimmy_kernel::{print, println};
 
 #[used]
 #[unsafe(link_section = ".requests")]
@@ -22,11 +22,11 @@ unsafe extern "C" fn kmain() -> ! {
 
     if let Some(framebuffer_response) = FRAMEBUFFER_REQUEST.get_response() {
         if let Some(framebuffer) = framebuffer_response.framebuffers().next() {
-            twilight_kernel::init(&framebuffer);
+            rimmy_kernel::init(&framebuffer);
         }
     }
 
-    println!("Hello from Twilight kernel!");
+    println!("Hello from rimmy kernel!");
 
     x86_64::instructions::interrupts::int3();
 
