@@ -8,14 +8,14 @@ pub mod writer;
 
 #[allow(static_mut_refs)]
 pub static mut FRAMEBUFFER: Once<RimmyFrameBuffer> = Once::new();
-pub struct RimmyFrameBuffer {
+pub struct rimmyFrameBuffer {
     addr: *mut u8,
     height: u64,
     width: u64,
     pitch: u64,
 }
 
-impl RimmyFrameBuffer {
+impl rimmyFrameBuffer {
     pub fn new(fb: &Framebuffer) -> Self {
         Self {
             addr: fb.addr(),
@@ -44,13 +44,25 @@ static mut WRITER: Option<Writer> = None;
 pub fn init_framebuffer(fb: &Framebuffer) {
     #[allow(static_mut_refs)]
     unsafe {
-        FRAMEBUFFER.call_once(|| RimmyFrameBuffer::new(fb));
+        FRAMEBUFFER.call_once(|| rimmyFrameBuffer::new(fb));
+    }
+    let fb_ptr = fb.addr();
+    let width = fb.width() as usize;
+    let height = fb.height() as usize;
+    let total_pixels = width * height; // 4 bytes per pixel (ARGB or RGBA format)
+    let bg_color = 0x282C34u32;
+
+    unsafe {
+        let fb_u32_ptr = fb_ptr.cast::<u32>(); // Cast to u32 pointer
+        for i in 0..total_pixels {
+            fb_u32_ptr.add(i).write(bg_color);
+        }
     }
 }
 
 pub fn init_writer() {
     #[allow(static_mut_refs)]
-    unsafe { WRITER = Some(Writer::new(0xFFFFFF)); }
+    unsafe { WRITER = Some(Writer::new(0xE2E3E4)); }
 }
 
 pub fn get_writer() -> &'static mut Writer {
@@ -59,7 +71,7 @@ pub fn get_writer() -> &'static mut Writer {
 }
 
 
-pub fn get_framebuffer() -> &'static RimmyFrameBuffer {
+pub fn get_framebuffer() -> &'static rimmyFrameBuffer {
     #[allow(static_mut_refs)]
     unsafe { FRAMEBUFFER.get().unwrap() }
 }
