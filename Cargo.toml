@@ -1,3 +1,0 @@
-[workspace]
-members = ["rimmy_common", "rimmy_kernel", "rimmy_proc", "userspace"]
-resolver = "2"
