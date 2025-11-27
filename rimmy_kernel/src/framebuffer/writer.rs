@@ -1,10 +1,10 @@
 use core::fmt;
 use core::fmt::{Write};
 use crate::framebuffer::font::PSF_FONTS;
-use crate::framebuffer::{get_framebuffer, rimmyFrameBuffer};
+use crate::framebuffer::{get_framebuffer, RimmyFrameBuffer};
 
 pub fn print(
-    framebuffer: &'static rimmyFrameBuffer,
+    framebuffer: &'static RimmyFrameBuffer,
     x: usize,
     y: usize,
     color: u32,
@@ -32,7 +32,7 @@ pub fn print(
     }
 }
 
-pub fn clear_char(framebuffer: &'static rimmyFrameBuffer, x: usize, y: usize, color: u32) {
+pub fn clear_char(framebuffer: &'static RimmyFrameBuffer, x: usize, y: usize, color: u32) {
     let fb_ptr = framebuffer.addr();
     let pitch = framebuffer.pitch() as usize;
     let char_width = 8;  // Assuming 8x16 font size
@@ -51,7 +51,7 @@ pub fn clear_char(framebuffer: &'static rimmyFrameBuffer, x: usize, y: usize, co
     }
 }
 pub struct Writer {
-    framebuffer: &'static rimmyFrameBuffer,
+    framebuffer: &'static RimmyFrameBuffer,
     column_position: usize,
     row_position: usize,
     color: u32,
