@@ -8,14 +8,14 @@ pub mod writer;
 
 #[allow(static_mut_refs)]
 pub static mut FRAMEBUFFER: Once<RimmyFrameBuffer> = Once::new();
-pub struct rimmyFrameBuffer {
+pub struct RimmyFrameBuffer {
     addr: *mut u8,
     height: u64,
     width: u64,
     pitch: u64,
 }
 
-impl rimmyFrameBuffer {
+impl RimmyFrameBuffer {
     pub fn new(fb: &Framebuffer) -> Self {
         Self {
             addr: fb.addr(),
@@ -44,7 +44,7 @@ static mut WRITER: Option<Writer> = None;
 pub fn init_framebuffer(fb: &Framebuffer) {
     #[allow(static_mut_refs)]
     unsafe {
-        FRAMEBUFFER.call_once(|| rimmyFrameBuffer::new(fb));
+        FRAMEBUFFER.call_once(|| RimmyFrameBuffer::new(fb));
     }
     let fb_ptr = fb.addr();
     let width = fb.width() as usize;
@@ -71,7 +71,7 @@ pub fn get_writer() -> &'static mut Writer {
 }
 
 
-pub fn get_framebuffer() -> &'static rimmyFrameBuffer {
+pub fn get_framebuffer() -> &'static RimmyFrameBuffer {
     #[allow(static_mut_refs)]
     unsafe { FRAMEBUFFER.get().unwrap() }
 }
