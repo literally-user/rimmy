@@ -2,6 +2,7 @@ use lazy_static::lazy_static;
 use x86_64::structures::gdt::{Descriptor, GlobalDescriptorTable, SegmentSelector};
 use x86_64::structures::tss::TaskStateSegment;
 use x86_64::VirtAddr;
+use crate::{println, print};
 
 pub const DOUBLE_FAULT_IST_INDEX: u16 = 0;
 
@@ -11,15 +12,13 @@ lazy_static! {
         tss.interrupt_stack_table[DOUBLE_FAULT_IST_INDEX as usize] = {
             unsafe {
                 const STACK_SIZE: usize = 4096 * 5;
-                #[repr(align(16))]
-                struct AlignedStack([u8; STACK_SIZE]);
-
-                static mut STACK: AlignedStack = AlignedStack([0; STACK_SIZE]);
+                static mut STACK: [u8; STACK_SIZE] = [0; STACK_SIZE];
 
                 let stack_start = VirtAddr::from_ptr(&raw const STACK);
                 let stack_end = stack_start + STACK_SIZE as u64;
+                println!("{}", stack_end.as_u64());
                 stack_end
-                }
+            }
         };
         tss
     };
@@ -28,14 +27,19 @@ lazy_static! {
 lazy_static! {
     static ref GDT: (GlobalDescriptorTable, Selectors) = {
         let mut gdt = GlobalDescriptorTable::new();
+
         let code_selector = gdt.append(Descriptor::kernel_code_segment());
+
+        gdt.append(Descriptor::kernel_data_segment());
+
         let tss_selector = gdt.append(Descriptor::tss_segment(&TSS));
-        (
-            gdt,
-            Selectors {
-                code_selector,
-                tss_selector,
-            },
+
+        gdt.append(Descriptor::UserSegment(0));
+
+        gdt.append(Descriptor::kernel_data_segment());
+
+        (gdt,
+            Selectors { code_selector, tss_selector },
         )
     };
 }
