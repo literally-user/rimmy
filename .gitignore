@@ -2,6 +2,9 @@
 /limine
 /ovmf
 
+# JetBrains
+.idea/
+
 # Compiled binaries
 *.iso
 rimmy_kernel/kernel
