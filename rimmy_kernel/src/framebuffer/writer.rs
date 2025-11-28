@@ -70,13 +70,21 @@ impl Writer{
     }
 
     pub fn write_char(&mut self,  c: char) {
-        if c == '\n' {
-            self.new_line();
-        } else {
-            print(self.framebuffer, self.column_position * 8, self.row_position * 16, self.color, c as u8);
-            self.column_position += 1;
-            if self.column_position >= (self.framebuffer.width() / 8) as usize {
-                self.new_line();
+        match c {
+            '\n' => self.new_line(),
+            '\x08' => {
+                clear_char(self.framebuffer, self.column_position * 8, self.row_position * 16, 0x282C34u32);
+                if self.column_position > 0 {
+                    self.column_position -= 1;
+                }
+            },
+
+            _ => {
+                print(self.framebuffer, self.column_position * 8, self.row_position * 16, self.color, c as u8);
+                self.column_position += 1;
+                if self.column_position >= (self.framebuffer.width() / 8) as usize {
+                    self.new_line();
+                }
             }
         }
     }
