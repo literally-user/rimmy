@@ -1,3 +1,7 @@
 /target
 /limine
 /ovmf
+
+# Compiled binaries
+*.iso
+rimmy_kernel/kernel
