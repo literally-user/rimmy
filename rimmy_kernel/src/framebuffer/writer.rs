@@ -1,19 +1,11 @@
-use core::fmt;
-use core::fmt::{Write};
 use crate::framebuffer::font::PSF_FONTS;
-use crate::framebuffer::{get_framebuffer, RimmyFrameBuffer};
+use crate::framebuffer::{RimmyFrameBuffer, get_framebuffer};
+use core::fmt;
+use core::fmt::Write;
 
-pub fn print(
-    framebuffer: &'static RimmyFrameBuffer,
-    x: usize,
-    y: usize,
-    color: u32,
-    ascii: u8,
-) {
-
+pub fn print(framebuffer: &'static RimmyFrameBuffer, x: usize, y: usize, color: u32, ascii: u8) {
     let fb_ptr = framebuffer.addr();
     let pitch = framebuffer.pitch();
-
     if let Some(font_bitmap) = PSF_FONTS.get(ascii as usize - 32) {
         for (row, &bitmap) in font_bitmap.iter().enumerate() {
             let rev_bitmap = bitmap.reverse_bits();
@@ -35,7 +27,7 @@ pub fn print(
 pub fn clear_char(framebuffer: &'static RimmyFrameBuffer, x: usize, y: usize, color: u32) {
     let fb_ptr = framebuffer.addr();
     let pitch = framebuffer.pitch() as usize;
-    let char_width = 8;  // Assuming 8x16 font size
+    let char_width = 8; // Assuming 8x16 font size
     let char_height = 16;
 
     for row in 0..char_height {
@@ -50,7 +42,7 @@ pub fn clear_char(framebuffer: &'static RimmyFrameBuffer, x: usize, y: usize, co
         }
     }
 }
-pub struct Writer  {
+pub struct Writer {
     framebuffer: &'static RimmyFrameBuffer,
     column_position: usize,
     row_position: usize,
@@ -69,26 +61,21 @@ impl Writer {
         }
     }
 
-    pub fn write_char(&mut self,  c: char) {
+    pub fn write_char(&mut self, c: char) {
         match c {
             '\n' => self.new_line(),
             '\x08' => {
                 clear_char(self.framebuffer, self.column_position * 8, self.row_position * 16, 0x282C34u32);
                 if self.column_position > 0 {
                     self.column_position -= 1;
-                } else {
-                    if self.row_position > 0 {
-                        self.row_position -= 1;
-                    }
                 }
             },
-
-            '\x7F' => {
-                self.column_position += 1;
-                clear_char(self.framebuffer, self.column_position * 8, self.row_position * 16, 0x282C34u32);
-                self.column_position -= 1;
+            '\t' => {
+                self.column_position += 4;
+                if self.column_position >= (self.framebuffer.width / 8) as usize{
+                    self.new_line();
+                }
             },
-
             _ => {
                 print(self.framebuffer, self.column_position * 8, self.row_position * 16, self.color, c as u8);
                 self.column_position += 1;
@@ -100,7 +87,6 @@ impl Writer {
     }
 
     fn new_line(&mut self) {
-
         self.column_position = 0;
         self.row_position += 1;
         if self.row_position >= (self.framebuffer.height() / 16) as usize {
@@ -116,14 +102,12 @@ impl Writer {
     pub fn clear_line(&mut self, row: usize) {
         let clear_color = 0x282C34u32;
 
-        for i in 0..self.framebuffer.width()/8 {
+        for i in 0..self.framebuffer.width() / 8 {
             clear_char(self.framebuffer, i as usize * 8, row * 16, clear_color);
         }
     }
 
-
     pub fn write_string(&mut self, s: &str) {
-
         for c in s.chars() {
             self.write_char(c);
         }
