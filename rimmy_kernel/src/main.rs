@@ -54,7 +54,7 @@ unsafe extern "C" fn kmain() -> ! {
     rimmy_kernel::init(&framebuffer.unwrap(), hhdm_response.unwrap(), memory_map_response.unwrap());
 
     rimmy_kernel::console::start_kernel_console();
-    
+
     let mut executor = Executor::new();
     executor.spawn(Task::new(keyboard_interrupt()));
     executor.run();
