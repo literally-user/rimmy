@@ -50,7 +50,7 @@ pub fn clear_char(framebuffer: &'static RimmyFrameBuffer, x: usize, y: usize, co
         }
     }
 }
-pub struct Writer {
+pub struct Writer  {
     framebuffer: &'static RimmyFrameBuffer,
     column_position: usize,
     row_position: usize,
@@ -58,7 +58,7 @@ pub struct Writer {
     need_flush: bool,
 }
 
-impl Writer{
+impl Writer {
     pub fn new(color: u32) -> Self {
         Self {
             framebuffer: get_framebuffer(),
@@ -76,7 +76,17 @@ impl Writer{
                 clear_char(self.framebuffer, self.column_position * 8, self.row_position * 16, 0x282C34u32);
                 if self.column_position > 0 {
                     self.column_position -= 1;
+                } else {
+                    if self.row_position > 0 {
+                        self.row_position -= 1;
+                    }
                 }
+            },
+
+            '\x7F' => {
+                self.column_position += 1;
+                clear_char(self.framebuffer, self.column_position * 8, self.row_position * 16, 0x282C34u32);
+                self.column_position -= 1;
             },
 
             _ => {
