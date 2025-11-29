@@ -52,11 +52,11 @@ fn exec(cmd: &str, args: &[&str]) {
     match cmd {
         "echo" => crate::kernel_utils::echo::main(args),
         "clear" => {
-            crate::framebuffer::clear_screen();
+            crate::framebuffer::clear_screen(true);
         },
         "meminfo" => crate::kernel_utils::meminfo::main(),
         "uname" => {
-            println!("TwilightOS Twilight-Kernel 0.1 DevBuild (22/03/25)")
+            println!("Rimmy-Kernel 0.1 DevBuild")
         },
         _ => {
             println!("{}: not a command", cmd);
