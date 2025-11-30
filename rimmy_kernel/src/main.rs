@@ -10,7 +10,7 @@ use limine::request::{FramebufferRequest, HhdmRequest, MemoryMapRequest};
 use limine::response::{HhdmResponse, MemoryMapResponse};
 use rimmy_kernel::{print, println};
 use rimmy_kernel::driver::keyboard::keyboard_interrupt;
-use rimmy_kernel::task::executor::Executor;
+use rimmy_kernel::task::executor::{EXECUTOR};
 use rimmy_kernel::task::Task;
 
 #[used]
@@ -53,9 +53,11 @@ unsafe extern "C" fn kmain() -> ! {
 
     rimmy_kernel::init(&framebuffer.unwrap(), hhdm_response.unwrap(), memory_map_response.unwrap());
 
-    rimmy_kernel::console::start_kernel_console();
 
-    let mut executor = Executor::new();
+    rimmy_kernel::console::start_kernel_console();
+    rimmy_kernel::console::init_console();
+
+    let mut executor = EXECUTOR.get().unwrap().lock();
     executor.spawn(Task::new(keyboard_interrupt()));
     executor.run();
 }
