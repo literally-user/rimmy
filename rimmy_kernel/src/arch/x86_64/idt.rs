@@ -76,6 +76,8 @@ pub fn init_pics() {
 
 
 extern "x86-interrupt" fn timer_interrupt_handler(_stack_frame: InterruptStackFrame) {
+    crate::driver::timer::pit::tick();
+
     unsafe {
         PICS.lock().notify_end_of_interrupt(interrupt_index(0));
     }
@@ -89,7 +91,7 @@ extern "x86-interrupt" fn keyboard_interrupt_handler(_stack_frame: InterruptStac
     let scancode: u8 = unsafe { port.read() };
 
     crate::driver::keyboard::add_scancode(scancode);
-    
+
     unsafe {
         PICS.lock().notify_end_of_interrupt(interrupt_index(1));
     }
